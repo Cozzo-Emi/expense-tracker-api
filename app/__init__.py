@@ -3,6 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
 from app.config import Config
 from flask_jwt_extended import JWTManager
+from flask_cors import CORS
 
 # Inicializamos las extensiones
 db = SQLAlchemy()
@@ -11,6 +12,7 @@ jwt = JWTManager()
 
 def create_app(config_class=Config):
     app = Flask(__name__)
+    CORS(app)
     app.config.from_object(config_class)
 
     # Vinculamos a la app
