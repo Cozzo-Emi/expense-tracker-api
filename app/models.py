@@ -47,6 +47,7 @@ class Household(db.Model):
     
     # Código privado de invitación — solo quien lo tiene puede unirse
     invite_code = db.Column(db.String(10), unique=True, nullable=True)
+    creator_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
     
     members = db.relationship('User', secondary=household_members, back_populates='households')
     categories = db.relationship('Category', backref='household', lazy=True, cascade="all, delete-orphan")

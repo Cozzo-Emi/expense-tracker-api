@@ -87,7 +87,8 @@ def create_household():
     new_household = Household(
         name=data['name'],
         type=data.get('type', 'home'),
-        invite_code=invite_code
+        invite_code=invite_code,
+        creator_id=int(current_user_id)
     )
 
     creator = User.query.get(current_user_id)
@@ -123,6 +124,23 @@ def join_household():
     household.members.append(user)
     db.session.commit()
     return household_schema.jsonify(household), 200
+
+
+@api.route('/households/<int:household_id>', methods=['DELETE'])
+@jwt_required()
+def delete_household(household_id):
+    """
+    Elimina un grupo. Solo el creador tiene permiso.
+    """
+    current_user_id = int(get_jwt_identity())
+    household = Household.query.get_or_404(household_id)
+
+    if household.creator_id != current_user_id:
+        return jsonify({"error": "No tenés permiso para eliminar este grupo. Solo el creador puede hacerlo."}), 403
+
+    db.session.delete(household)
+    db.session.commit()
+    return jsonify({"message": "Grupo eliminado correctamente"}), 200
 
 
 # ==========================================
