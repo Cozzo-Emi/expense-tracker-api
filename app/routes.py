@@ -56,7 +56,7 @@ def login():
 # 🏠 GRUPOS / HOUSEHOLDS (PROTEGIDOS)
 # ==========================================
 
-@api.route('/households', methods=['GET'])
+@api.route('/households', methods=['GET'], endpoint='get_households')
 @jwt_required()
 def get_households():
     """Lista todos los grupos a los que pertenece el usuario"""
@@ -66,8 +66,7 @@ def get_households():
         return jsonify({"error": "Usuario no encontrado"}), 404
     return households_schema.jsonify(user.households), 200
 
-
-@api.route('/households', methods=['POST'])
+@api.route('/households', methods=['POST'], endpoint='create_household')
 @jwt_required()
 def create_household():
     """
@@ -130,7 +129,7 @@ def join_household():
 # 💸 TRANSACCIONES (PROTEGIDAS)
 # ==========================================
 
-@api.route('/transactions', methods=['GET'])
+@api.route('/transactions', methods=['GET'], endpoint='get_transactions')
 @jwt_required()
 def get_transactions():
     """
@@ -169,7 +168,7 @@ def get_transactions():
     return transactions_schema.jsonify(transactions), 200
 
 
-@api.route('/transactions', methods=['POST'])
+@api.route('/transactions', methods=['POST'], endpoint='create_transaction')
 @jwt_required()
 def create_transaction():
     current_user_id = get_jwt_identity()
