@@ -66,10 +66,11 @@ def get_households():
         return jsonify({"error": "Usuario no encontrado"}), 404
     return households_schema.jsonify(user.households), 200
 
+
 @api.route('/households', methods=['POST'], endpoint='create_household')
 @jwt_required()
 def create_household():
-    """Crea un nuevo grupo y genera automáticamente un código de invitación privado."""
+    """Crea un nuevo grupo, genera su código y le asigna las categorías por defecto."""
     current_user_id = int(get_jwt_identity())
     data = request.get_json()
 
@@ -91,8 +92,30 @@ def create_household():
     new_household.members.append(creator)
 
     db.session.add(new_household)
-    db.session.commit()
+    db.session.commit() # Hacemos commit acá para que new_household tenga un ID real
+
+    # --- INICIO DE MODIFICACIÓN: Auto-poblamos las categorías ---
+    categorias_por_defecto = [
+        {"name": "Supermercado", "type": "expense"},
+        {"name": "Transporte", "type": "expense"},
+        {"name": "Servicios", "type": "expense"},
+        {"name": "Entretenimiento", "type": "expense"},
+        {"name": "Alquiler / Expensas", "type": "expense"},
+        {"name": "Sueldo", "type": "income"},
+        {"name": "Transferencia", "type": "income"},
+        {"name": "Ventas", "type": "income"},
+        {"name": "Otros", "type": "both"}
+    ]
+    
+    for cat in categorias_por_defecto:
+        nueva_cat = Category(name=cat["name"], type=cat["type"], household_id=new_household.id)
+        db.session.add(nueva_cat)
+        
+    db.session.commit() # Guardamos todas las categorías en la base de datos
+    # --- FIN DE MODIFICACIÓN ---
+
     return household_schema.jsonify(new_household), 201
+
 
 @api.route('/households/join', methods=['POST'])
 @jwt_required()
@@ -117,6 +140,7 @@ def join_household():
     db.session.commit()
     return household_schema.jsonify(household), 200
 
+
 @api.route('/households/<int:household_id>', methods=['DELETE'])
 @jwt_required()
 def delete_household(household_id):
@@ -131,7 +155,7 @@ def delete_household(household_id):
     db.session.commit()
     return jsonify({"message": "Grupo eliminado correctamente"}), 200
 
-# NUEVO: Endpoint de Categorías dinámicas
+
 @api.route('/households/<int:household_id>/categories', methods=['GET'])
 @jwt_required()
 def get_categories(household_id):
@@ -147,7 +171,7 @@ def get_categories(household_id):
     return jsonify([{
         "id": c.id, 
         "name": c.name,
-        "type": "expense" # O el campo correspondiente en tu modelo
+        "type": c.type # O el campo correspondiente en tu modelo
     } for c in categories]), 200
 
 
@@ -186,6 +210,7 @@ def get_transactions():
         ).order_by(Transaction.date.desc()).all()
 
     return transactions_schema.jsonify(transactions), 200
+
 
 @api.route('/transactions', methods=['POST'], endpoint='create_transaction')
 @jwt_required()
