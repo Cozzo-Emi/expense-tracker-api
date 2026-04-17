@@ -1,4 +1,4 @@
-##🚀 HousePay - Backend API (Flask)
+🚀 HousePay - Backend API (Flask)
 
 ![Python](https://img.shields.io/badge/Python-3.12%2B-blue?style=for-the-badge&logo=python&logoColor=white)
 ![Flask](https://img.shields.io/badge/Flask-3.0%2B-black?style=for-the-badge&logo=flask&logoColor=white)
@@ -8,7 +8,7 @@ Esta es la API robusta que alimenta a **HousePay**, la aplicación para la gesti
 
 ---
 
-## ✨ Características Técnicas
+✨ Características Técnicas
 
 - **Autenticación Segura:** Implementada con JWT (JSON Web Tokens) mediante `Flask-JWT-Extended`.
 - **Arquitectura de Grupos:** Permite la creación de "Households" privados con códigos de invitación únicos (ej: `A3K9PZ`).
@@ -18,7 +18,7 @@ Esta es la API robusta que alimenta a **HousePay**, la aplicación para la gesti
 
 ---
 
-## 🛠️ Tecnologías Utilizadas
+🛠️ Tecnologías Utilizadas
 
 * **Framework:** Flask
 * **ORM:** SQLAlchemy
